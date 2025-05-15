@@ -1,0 +1,36 @@
+{
+    "title": "Monaco Editor Loader Options",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["workers", "features", "languages"],
+    "properties": {
+        "workers": {
+            "type": "object",
+            "description": "Object containing a map of workers label to their entry file.",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "features": {
+            "type": "array",
+            "description": "Array of Monaco editor features entries to include.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "languages": {
+            "type": "array",
+            "description": "Array of Monaco editor languages entries to include.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "publicPath": {
+            "type": "string",
+            "description": "The public path to load the Monaco Editor from. This is used to load the editor from a CDN or a custom location."
+        },
+        "global": {
+            "type": "boolean"
+        }
+    }
+}

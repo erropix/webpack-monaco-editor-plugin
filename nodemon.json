@@ -1,0 +1,9 @@
+{
+    "ext": "ts,js,mjs",
+    "ignore": [
+        "dist/**",
+        "node_modules/**",
+        "scripts/**"
+    ],
+    "exec": "yalc publish --push --changed --update"
+}

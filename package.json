@@ -1,32 +1,31 @@
 {
-	"name": "monaco-editor-webpack",
-	"version": "7.1.1",
-	"description": "A webpack plugin to correctly the Monaco Editor esm modules.",
-	"main": "dist/index.js",
-	"typings": "./dist/index.d.ts",
-	"scripts": {
-		"watch": "tsc -w -p tsconfig.json",
-		"compile": "tsc -p tsconfig.json",
-		"prepublishOnly": "npm run compile"
-	},
-	"keywords": [
-		"webpack",
-		"monaco",
-		"editor",
-		"loader"
-	],
-	"author": "Microsoft Corporation",
-	"license": "MIT",
-	"peerDependencies": {
-		"webpack": ">= 5.94.0",
-		"monaco-editor": ">= 0.31.0"
-	},
-	"devDependencies": {
-		"monaco-editor": "^0.32.0",
-		"typescript": "^5.8.3",
-		"webpack": "^5.68.0"
-	},
-	"dependencies": {
-		"loader-utils": "^3.3.1"
-	}
+    "name": "webpack-monaco-editor-plugin",
+    "version": "1.0.0",
+    "description": "A webpack plugin to load and configure the Monaco Editor esm modules.",
+    "main": "dist/index.js",
+    "scripts": {
+        "watch": "tsc --watch",
+        "build": "tsc --build",
+        "prepare": "tsc --build"
+    },
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "webpack",
+        "monaco",
+        "editor",
+        "plugin",
+        "loader"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "loader-utils": "^3.3.1",
+        "monaco-editor": ">= 0.31.0",
+        "schema-utils": "^4.3.2",
+        "webpack": ">= 5.94.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.3"
+    }
 }

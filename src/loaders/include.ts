@@ -1,41 +1,61 @@
-import type { PitchLoaderDefinitionFunction } from 'webpack';
-import * as loaderUtils from 'loader-utils';
+import schema from './schema.json';
 
-export interface ILoaderOptions {
-	globals?: { [key: string]: string };
-	pre?: string[];
-	post?: string[];
+import type { PitchLoaderDefinitionFunction } from 'webpack';
+import type { Schema } from 'schema-utils';
+
+export interface IMonacoEditorLoaderOptions {
+    workers: Record<string, string>;
+    features: string[];
+    languages: string[];
+    publicPath?: string;
+    global?: boolean;
 }
 
-export const pitch: PitchLoaderDefinitionFunction<ILoaderOptions> = function pitch(
-	remainingRequest
-) {
-	const { globals = undefined, pre = [], post = [] } = (this.query as ILoaderOptions) || {};
+export const pitch: PitchLoaderDefinitionFunction<IMonacoEditorLoaderOptions> = function pitch(request: string) {
+    const context = this.context || this.rootContext;
+    const { workers, features, languages, publicPath = '', global = false } = this.getOptions(schema as Schema);
 
-	// HACK: NamedModulesPlugin overwrites existing modules when requesting the same module via
-	// different loaders, so we need to circumvent this by appending a suffix to make the name unique
-	// See https://github.com/webpack/webpack/issues/4613#issuecomment-325178346 for details
-	if (this._module && this._module.userRequest) {
-		this._module.userRequest = `include-loader!${this._module.userRequest}`;
-	}
+    if (typeof this.query !== 'object') {
+        throw new Error('MonacoEditorPlugin: Invalid loader options!');
+    }
 
-	const stringifyRequest = (request: string) => {
-		if (this.utils) {
-			return JSON.stringify(this.utils.contextify(this.context || this.rootContext, request));
-		}
-		return loaderUtils.stringifyRequest(this, request);
-	};
+    const contextify = (entry: string) => {
+        return this.utils.contextify(context, entry);
+    };
 
-	return [
-		...(globals
-			? Object.keys(globals).map((key) => `self[${JSON.stringify(key)}] = ${globals[key]};`)
-			: []),
-		...pre.map((include: any) => `import ${stringifyRequest(include)};`),
-		`
-import * as monaco from ${stringifyRequest(`!!${remainingRequest}`)};
-export * from ${stringifyRequest(`!!${remainingRequest}`)};
-export default monaco;
-		`,
-		...post.map((include: any) => `import ${stringifyRequest(include)};`)
-	].join('\n');
+    const buffer: string[] = [];
+
+    buffer.push(`// Setup Monaco Environment to load workers
+const base = ${JSON.stringify(publicPath)} || __webpack_public_path__;
+const paths = ${JSON.stringify(workers, null, 4)};
+
+function getWorkerUrl(id, label) {
+    if (!paths.hasOwnProperty(label))
+        throw new Error(\`The \${label} worker was not found. Supported workers: \${Object.keys(paths).join(', ')}\`);
+    const path = paths[label];
+    const url = new URL(path, new URL(base, location.origin));
+    if (url.origin === location.origin)
+        return url;
+    return URL.createObjectURL(new Blob([\`import '\${url}';\`], { type: 'text/javascript' }));
+}
+
+self.MonacoEnvironment = {
+    globalAPI: ${global},
+    getWorkerUrl,
+};`);
+    buffer.push('');
+    buffer.push('// Import feature modules');
+    buffer.push(...features.map((entry) => `import "${contextify(entry)}";`));
+    buffer.push('');
+    buffer.push(`// Import Monaco Editor core`);
+    buffer.push(`import * as monaco from "${contextify(`!!${request}`)}";`);
+    buffer.push('');
+    buffer.push('// Import language modules');
+    buffer.push(...languages.map((entry) => `import "${contextify(entry)}";`));
+    buffer.push('');
+    buffer.push('// Export Monaco Editor API');
+    buffer.push(`export * from "${contextify(`!!${request}`)}";`);
+    buffer.push(`export default monaco;`);
+
+    return buffer.join('\n');
 };

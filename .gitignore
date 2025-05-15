@@ -1,14 +1,12 @@
-# Node.js dependencies
+# Ignore development dependencies and build artifacts
+*.tsbuildinfo
 node_modules/
 
-# Build output
+# Ignore build output
 dist/
 
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# IDE files
+# ignore IDE files and OS-specific files
 .vscode/
 .idea/
-*.iml
+.DS_Store
+Thumbs.db
