@@ -28,15 +28,17 @@ module.exports = {
     // ...existing Webpack configuration...
     plugins: [
         new MonacoEditorPlugin({
-            features: ['!gotoSymbol'], // Exclude specific features by prefixing their IDs with '!'
-            languages: ['javascript'], // Include specific languages, 'javascript' depends on 'typescript', it will be included by the plugin
-            filename: '[name].[contenthash].js', // Workers output filename template
-            publicPath: '', // Public path for assets
-            global: true, // Enable global API
+            features: ['!gotoSymbol'], // [Optional] Exclude specific features by prefixing their IDs with '!'
+            languages: ['javascript'], // [Optional] Include specific languages
+            filename: '[name].[contenthash].js', // [Optional] Workers output filename template
+            publicPath: '', // [Optional] Public path for assets
+            global: true, // [Optional] Enable global API
         }),
     ],
 };
 ```
+
+> **Note:** Specifying `'javascript'` in the `languages` option will automatically include `'typescript'` as well, since Monaco Editor's JavaScript support depends on the TypeScript language service.
 
 Then, use the monaco editor in your app
 
