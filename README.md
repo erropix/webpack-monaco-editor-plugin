@@ -17,12 +17,6 @@ To install the plugin, use npm or yarn:
 npm install webpack-monaco-editor-plugin --save-dev
 ```
 
-or
-
-```bash
-yarn add webpack-monaco-editor-plugin --dev
-```
-
 ## Usage Example
 
 Add the plugin to your Webpack configuration file:
@@ -85,20 +79,54 @@ The plugin accepts the following options:
 
 ## Development
 
+### Why use `yalc` instead of `npm link`?
+
+While `npm link` is a built-in tool for local development, it can cause issues with dependency resolution, especially with complex setups like monorepos or when using different versions of dependencies. `yalc` is a better alternative because:
+
+- It publishes your package to a local store and installs it as if it were a real npm package, ensuring consistent dependency resolution.
+- It avoids symlink-related issues that can cause problems with tools like webpack, especially with module duplication or type mismatches.
+- It is more reliable for testing your package in real-world scenarios.
+
+To install `yalc`, run:
+
+```bash
+npm install -g yalc
+```
+
+For more details on installation and usage, please check the [yalc repository](https://github.com/wclr/yalc).
+
+### Automatic build and publish with Nodemon
+
+For convenience, `nodemon` is configured to automatically build and publish the package to Yalc local store whenever source files change. This streamlines the development workflow by ensuring your local package updates are immediately available to consuming projects.
+
+To install `nodemon`, run:
+
+```bash
+npm install -g nodemon
+```
+
+To start automatic publishing, run:
+
+```bash
+nodemon
+```
+
+This command uses `nodemon` to watch for changes and trigger `yalc publish --push --changed --update`.
+
+### Watch
+
+Start the typescript compiler in watch mode:
+
+```bash
+npm run watch
+```
+
 ### Build
 
 To build the plugin, run:
 
 ```bash
 npm run build
-```
-
-### Watch
-
-To enable watch mode for development:
-
-```bash
-npm run watch
 ```
 
 ## Contributing
