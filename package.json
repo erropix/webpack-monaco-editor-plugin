@@ -4,6 +4,11 @@
     "description": "A webpack plugin to load and configure the Monaco Editor esm modules.",
     "main": "dist/index.js",
     "packageManager": "npm@9.6.7",
+    "author": "Abdelouahed E. <errouaguy.pro@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/erropix/webpack-monaco-editor-plugin.git"
+    },
     "scripts": {
         "watch": "tsc --watch",
         "build": "tsc --build",
