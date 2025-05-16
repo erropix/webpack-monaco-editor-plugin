@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "A webpack plugin to load and configure the Monaco Editor esm modules.",
     "main": "dist/index.js",
+    "packageManager": "npm@9.6.7",
     "scripts": {
         "watch": "tsc --watch",
         "build": "tsc --build",
@@ -21,11 +22,13 @@
     "license": "MIT",
     "dependencies": {
         "loader-utils": "^3.3.1",
-        "monaco-editor": ">= 0.31.0",
-        "schema-utils": "^4.3.2",
-        "webpack": ">= 5.94.0"
+        "schema-utils": "^4.3.2"
     },
     "devDependencies": {
         "typescript": "^5.8.3"
+    },
+    "peerDependencies": {
+        "webpack": ">= 5.94",
+        "monaco-editor": ">= 0.31"
     }
 }
