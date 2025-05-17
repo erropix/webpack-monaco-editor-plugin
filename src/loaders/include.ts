@@ -15,10 +15,6 @@ export const pitch: PitchLoaderDefinitionFunction<IMonacoEditorLoaderOptions> = 
     const context = this.context || this.rootContext;
     const { workers, features, languages, publicPath = '', global = false } = this.getOptions(schema as Schema);
 
-    if (typeof this.query !== 'object') {
-        throw new Error('MonacoEditorPlugin: Invalid loader options!');
-    }
-
     const contextify = (entry: string) => {
         return this.utils.contextify(context, entry);
     };
