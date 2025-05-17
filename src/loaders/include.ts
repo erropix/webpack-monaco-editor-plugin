@@ -12,11 +12,10 @@ export interface IMonacoEditorLoaderOptions {
 }
 
 export const pitch: PitchLoaderDefinitionFunction<IMonacoEditorLoaderOptions> = function pitch(request: string) {
-    const context = this.context || this.rootContext;
     const { workers, features, languages, publicPath = '', global = false } = this.getOptions(schema as Schema);
 
     const contextify = (entry: string) => {
-        return this.utils.contextify(context, entry);
+        return this.utils.contextify(this.context, entry);
     };
 
     const buffer: string[] = [];
