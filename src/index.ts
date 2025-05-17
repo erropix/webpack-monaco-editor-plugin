@@ -5,7 +5,7 @@ import { validate } from 'schema-utils';
 import { languages, features } from 'monaco-editor/esm/metadata';
 import schema from './schema.json';
 
-import type { Compiler, WebpackPluginInstance } from 'webpack';
+import type { Compilation, Compiler, WebpackPluginInstance } from 'webpack';
 import type { Schema } from 'schema-utils';
 import type { EditorFeature, EditorLanguage, IFeatureDefinition, IWorkerDefinition } from 'monaco-editor/esm/metadata';
 import type { IMonacoEditorLoaderOptions } from './loaders/include';
@@ -47,7 +47,7 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
      * MonacoEditorPlugin constructor
      * @param {IMonacoEditorPluginOptions} opts - The plugin options
      */
-    constructor(opts: IMonacoEditorPluginOptions) {
+    constructor(opts: IMonacoEditorPluginOptions = {}) {
         // Validate options against the schema
         validate(schema as Schema, opts, {
             name: 'Monaco Editor Plugin',
@@ -109,8 +109,8 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
         }
 
         // Add entry points for the worker modules
-        compiler.hooks.thisCompilation.tap('MonacoEditorPlugin', (compilation) => {
-            workers.forEach((worker: IWorker) => {
+        compiler.hooks.make.tapPromise('MonacoEditorPlugin', async (compilation: Compilation) => {
+            const tasks = Array.from(workers.values()).map((worker: IWorker) => {
                 const { id, entry, filename } = worker;
                 const path = this.resolve(entry);
 
@@ -122,10 +122,18 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
                 new webpack.EntryPlugin(context, path, id).apply(childCompiler);
                 new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-                childCompiler.runAsChild((err) => {
-                    if (err) compilation.errors.push(err);
-                });
+                return new Promise<void>((resolve, reject) => {
+                    childCompiler.runAsChild((err: Error | null) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });;
             });
+
+            await Promise.all(tasks);
         });
 
         // Add the loader rules and configure the monaco editor module
