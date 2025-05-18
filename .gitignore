@@ -1,5 +1,6 @@
 # Ignore development dependencies and build artifacts
 *.tsbuildinfo
+coverage/
 node_modules/
 
 # Ignore build output
