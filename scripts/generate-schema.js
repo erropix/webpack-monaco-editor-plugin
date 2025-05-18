@@ -3,9 +3,9 @@ const path = require('path');
 const { languages, features } = require('monaco-editor/esm/metadata');
 
 // Prepare plugin options schema enums
-const featureEnum = features.map((feature) => feature.label);
-const negatedFeatureEnum = featureEnum.map((feature) => `!${feature}`);
-const languageEnum = languages.map((language) => language.label);
+const featureEnum = features.map(feature => feature.label);
+const negatedFeatureEnum = featureEnum.map(feature => `!${feature}`);
+const languageEnum = languages.map(language => language.label);
 
 const pluginOptionsSchema = {
     type: 'object',
@@ -42,10 +42,15 @@ const pluginOptionsSchema = {
     },
 };
 
-fs.writeFile(path.posix.join(__dirname, '../src/schema.json'), JSON.stringify(pluginOptionsSchema, null, 4), 'utf-8', (err) => {
-    if (err) {
-        throw err;
-    }
+fs.writeFile(
+    path.posix.join(__dirname, '../src/schema.json'),
+    JSON.stringify(pluginOptionsSchema, null, 4),
+    'utf-8',
+    err => {
+        if (err) {
+            throw err;
+        }
 
-    console.log('Plugin options schema generated successfully!');
-});
+        console.log('Plugin options schema generated successfully!');
+    },
+);
