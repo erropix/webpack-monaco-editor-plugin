@@ -7,7 +7,7 @@ import schema from './schema.json';
 
 import type { Compilation, Compiler, WebpackPluginInstance } from 'webpack';
 import type { Schema } from 'schema-utils';
-import type { EditorFeature, EditorLanguage, IFeatureDefinition, IWorkerDefinition } from 'monaco-editor/esm/metadata';
+import type { EditorFeature, EditorLanguage, IFeatureDefinition, IWorkerDefinition, NegatedEditorFeature } from 'monaco-editor/esm/metadata';
 import type { IMonacoEditorLoaderOptions } from './loaders/include';
 
 interface IWorker extends IWorkerDefinition {
@@ -15,7 +15,7 @@ interface IWorker extends IWorkerDefinition {
 }
 
 export interface IMonacoEditorPluginOptions {
-    features?: EditorFeature[];
+    features?: (EditorFeature | NegatedEditorFeature)[];
     languages?: EditorLanguage[];
     filename?: string;
     publicPath?: string;
