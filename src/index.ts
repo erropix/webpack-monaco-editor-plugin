@@ -121,7 +121,7 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
                     new webpack.LoaderTargetPlugin('webworker')
                 ]);
 
-                new webpack.EntryPlugin(context, path, id).apply(childCompiler);
+                new webpack.EntryPlugin(context, path, label).apply(childCompiler);
                 new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
                 childCompiler.runAsChild(callback);
