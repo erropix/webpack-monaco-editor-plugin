@@ -266,7 +266,7 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
      */
     getModulesPaths(modules: IFeatureDefinition[]): string[] {
         // Extract the entry points from the modules
-        const entries = modules.flatMap(({ entry }) => (entry ? (Array.isArray(entry) ? entry : [entry]) : []));
+        const entries = modules.flatMap(({ entry }) => entry || []);
 
         // Resolve the entry points to their absolute paths
         return entries.map((entry) => this.resolve(entry, true));
