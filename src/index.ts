@@ -14,6 +14,8 @@ interface IWorker extends IWorkerDefinition {
     filename: string;
 }
 
+type CompilerCallback = (err: Error | null) => void;
+
 export interface IMonacoEditorPluginOptions {
     features?: (EditorFeature | NegatedEditorFeature)[];
     languages?: EditorLanguage[];
@@ -109,8 +111,8 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
         }
 
         // Add entry points for the worker modules
-        compiler.hooks.make.tapPromise('MonacoEditorPlugin', async (compilation: Compilation) => {
-            const tasks = Array.from(workers.values()).map((worker: IWorker) => {
+        workers.forEach((worker: IWorker, label: string) => {
+            compiler.hooks.make.tapAsync('MonacoEditorPlugin', (compilation: Compilation, callback: CompilerCallback) => {
                 const { id, entry, filename } = worker;
                 const path = this.resolve(entry);
 
@@ -122,18 +124,8 @@ export class MonacoEditorPlugin implements WebpackPluginInstance {
                 new webpack.EntryPlugin(context, path, id).apply(childCompiler);
                 new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-                return new Promise<void>((resolve, reject) => {
-                    childCompiler.runAsChild((err: Error | null) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve();
-                        }
-                    });
-                });;
+                childCompiler.runAsChild(callback);
             });
-
-            await Promise.all(tasks);
         });
 
         // Add the loader rules and configure the monaco editor module
